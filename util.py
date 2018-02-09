@@ -679,3 +679,4 @@ class Node:
         self.path = []
         self.priority = 0
         self.dir = None
+        self.location = None

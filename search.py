@@ -115,8 +115,6 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
     root = util.Node()
     root.state = problem.getStartState()
-    # print(problem.getStartState())
-    # print(problem.getSuccessors(problem.getStartState()))
     fringe = util.Queue()
     fringe.push(root)
 
@@ -124,7 +122,6 @@ def breadthFirstSearch(problem):
 
     while not fringe.isEmpty():
         node = fringe.pop()
-        print(node.state)
         if problem.isGoalState(node.state):
             return node.path
 
@@ -153,7 +150,7 @@ def uniformCostSearch(problem):
 
     while not fringe.isEmpty():
         node = fringe.pop()
-        if problem.isGoalState(node.state):
+        if problem.isG1oalState(node.state):
             return node.path
 
         if node.state not in closed_set:
@@ -167,7 +164,7 @@ def uniformCostSearch(problem):
                     element.state = successor[0]
                     element.dir = successor[1]
                     element.path = node.path + [successor[1]]
-                    element.priority = node.cost + successor[2]
+                    element.priority = node.priority + successor[2]
                     fringe.push(element, element.priority)
 
     print(closed_set)
@@ -208,7 +205,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     while not fringe.isEmpty():
         node = fringe.pop()
-        print(node.state)
         if problem.isGoalState(node.state):
             return node.path
 
@@ -226,8 +222,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                     element.path = node.path + [successor[1]]
                     element.cost = node.cost + successor[2] + heurval
                     fringe.push(element, element.cost)
-
-
 
 # Abbreviations
 bfs = breadthFirstSearch
