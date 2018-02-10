@@ -82,18 +82,17 @@ def depthFirstSearch(problem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
 """
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
 
     root = util.Node()
     root.state = problem.getStartState()
     fringe = util.Stack()
     fringe.push(root)
+
     closed_set = set()
 
     while not fringe.isEmpty():
         node = fringe.pop()
+
         if problem.isGoalState(node.state):
             return node.path
 
@@ -107,7 +106,6 @@ def depthFirstSearch(problem):
                     element.dir = successor[1]
                     element.path = node.path + [successor[1]]
                     fringe.push(element)
-
     return []
 
 def breadthFirstSearch(problem):
@@ -143,22 +141,19 @@ def uniformCostSearch(problem):
 
     root = util.Node()
     root.state = problem.getStartState()
-    root.priority = 0
+    root.priority = 1
     fringe = util.PriorityQueue()
-    fringe.push(root,0)
+    fringe.push(root,1)
     closed_set = set()
 
     while not fringe.isEmpty():
         node = fringe.pop()
-        if problem.isG1oalState(node.state):
-            return node.path
-
         if node.state not in closed_set:
             closed_set.add(node.state)
+            if problem.isGoalState(node.state):
+                return node.path
             successors = problem.getSuccessors(node.state)
             for successor in successors:
-                if problem.isGoalState(successor[0]):
-                    return node.path + [successor[1]]
                 if successor[0] not in closed_set:
                     element = util.Node()
                     element.state = successor[0]
@@ -193,14 +188,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     fringe = util.PriorityQueue()
     fringe.push(root, 0)
 
-    for successor in problem.getSuccessors(problem.getStartState()):
-        element = util.Node()
-        element.state = successor[0]
-        element.dir = successor[1]
-        element.path = [successor[1]]
-        element.cost = successor[2] + heuristic(successor[0], problem)
-        fringe.push(element, element.cost)
-
     closed_set = set()
 
     while not fringe.isEmpty():
@@ -212,16 +199,14 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             closed_set.add(node.state)
             successors = problem.getSuccessors(node.state)
             for successor in successors:
-                if problem.isGoalState(successor[0]):
-                    return node.path + [successor[1]]
                 if successor[0] not in closed_set:
                     heurval = heuristic(successor[0], problem)
                     element = util.Node()
                     element.state = successor[0]
                     element.dir = successor[1]
                     element.path = node.path + [successor[1]]
-                    element.cost = node.cost + successor[2] + heurval
-                    fringe.push(element, element.cost)
+                    element.priority = node.priority + successor[2]
+                    fringe.push(element, element.priority + heurval)
 
 # Abbreviations
 bfs = breadthFirstSearch
