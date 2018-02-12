@@ -291,7 +291,6 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
 
         self.start = (startingGameState.getPacmanPosition(), startingGameState.getFood())
 
@@ -306,7 +305,6 @@ class CornersProblem(search.SearchProblem):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
         return len(state[1].asList()) == 0
 
     def getSuccessors(self, state):
@@ -369,22 +367,17 @@ def cornersHeuristic(state, problem):
         return 0
     if len(cornersUnexplored.asList()) == 0:
         return 0
-    minimum = 9999
-    maximum = 0
-    nearestFoodLocation = None
-    farthestFoodLocation = None
 
-    for foodLocation in corners:
+    minimum = 9999
+    nearestFoodLocation = None
+
+    for foodLocation in cornersUnexplored.asList():
         distance = abs(position[0] - foodLocation[0]) + abs(position[1] - foodLocation[1])
         if distance < minimum:
             minimum = distance
             nearestFoodLocation = foodLocation
 
-        if distance > maximum:
-            maximum = distance
-            farthestFoodLocation = foodLocation
-    return abs(nearestFoodLocation[0] - position[0]) + abs(nearestFoodLocation[1] - position[1])
-
+    return max(abs(nearestFoodLocation[0] - position[0]), abs(nearestFoodLocation[1] - position[1])) + 1/2*len(cornersUnexplored.asList())
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
