@@ -156,11 +156,30 @@ class GreedyBustersAgent(BustersAgent):
              indices into this list should be 1 less than indices into the
              gameState.getLivingGhosts() list.
         """
+        livingGhostMostLikelyPosition = []
         pacmanPosition = gameState.getPacmanPosition()
         legal = [a for a in gameState.getLegalPacmanActions()]
         livingGhosts = gameState.getLivingGhosts()
         livingGhostPositionDistributions = \
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        for prob_dist in livingGhostPositionDistributions:
+            mle_loc = prob_dist.argMax()
+            livingGhostMostLikelyPosition.append(mle_loc)
+
+        minDistGhostLocation = (9999999, (0,0))
+        for loc in livingGhostMostLikelyPosition:
+            distance = self.distancer.getDistance(pacmanPosition, loc)
+            if distance < minDistGhostLocation:
+                minDistGhostLocation = (distance, loc)
+
+        bestMove = (9999999, legal[0])
+
+        for action in legal:
+            successorPosition = Actions.getSuccessor(pacmanPosition, action)
+            distance = self.distancer.getDistance(successorPosition, minDistGhostLocation[1])
+            if distance < bestMove[0]:
+                bestMove = (distance, action)
+
+        return bestMove[1]
