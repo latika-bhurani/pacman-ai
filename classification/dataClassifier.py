@@ -78,7 +78,51 @@ def enhancedFeatureExtractorDigit(datum):
     features =  basicFeatureExtractorDigit(datum)
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #util.raiseNotDefined()
+    w = range(DIGIT_DATUM_WIDTH)
+    h = range(DIGIT_DATUM_HEIGHT)
+    digits_col = []
+    for b in w:
+        digits_row = []
+        for a in h:
+            digits_row.append(0)
+        digits_col.append(digits_row)
+    digits = digits_col
+    wspace = 0
+
+    def getNeighbor(a, b, digits, datum):
+        width = DIGIT_DATUM_WIDTH
+        height = DIGIT_DATUM_HEIGHT
+        neighbor = []
+        digits[a][b] = 1
+        if a > 0:
+            neighbor.append((a - 1, b))
+        if a < width - 1:
+            neighbor.append((a + 1, b))
+        if b > 0:
+            neighbor.append((a, b - 1))
+        if b < height - 1:
+            neighbor.append((a, b + 1))
+        for (i, j) in neighbor:
+            if (datum.getPixel(i, j) == 0 and digits[i][j] == 0):
+                digits = getNeighbor(i, j, digits, datum)
+        return digits
+
+    for i in w:
+        for j in h:
+            if (datum.getPixel(i, j) == 0 and digits[i][j] == 0):
+                digits = getNeighbor( i, j, digits, datum)
+                wspace += 1
+
+    features[1] = 0
+    features[2] = 0
+    features[3] = 0
+    features[5] = 0
+    features[6] = 0
+    features[7] = 0
+    features[8] = 0
+    features[9] = 0
+    features[wspace] = 1
 
     return features
 
@@ -124,7 +168,22 @@ def enhancedPacmanFeatures(state, action):
     """
     features = util.Counter()
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #util.raiseNotDefined()
+
+    successor = state.generateSuccessor(0, action)
+    gdist = []
+    fdist = []
+    food = [(i, j) for i in range(successor.getFood().width) for j in range(successor.getFood().height) if
+           successor.getFood()[i][j] == True]
+    for x in food:
+        fdist.append(util.manhattanDistance(x, successor.getPacmanPosition()))
+    for y in successor.getGhostPositions():
+        gdist.append(util.manhattanDistance(y, successor.getPacmanPosition()))
+    fdist.sort()
+    for z in range(len(fdist)):
+        features['fdist_{0}'.format(z)] = pow(fdist[z], -1)
+    features['gdist'] = pow(1+min(gdist), -1)
+
     return features
 
 
